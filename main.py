@@ -1,40 +1,11 @@
 #Data Source
 import yfinance as yf
 
-#Data viz
-import plotly.graph_objs as go
+from dash import Dash, html
 
-# Get Bitcoin data
-data = yf.download(tickers='BTC-USD', period='22h', interval='15m')
+app = Dash()
 
-#declare figure
-fig = go.Figure()
+app.layout = html.Div("My Dashboard")
 
-#Candlestick
-fig.add_trace(go.Candlestick(x=data.index,
-                open=data['Open'],
-                high=data['High'],
-                low=data['Low'],
-                close=data['Close'], name='market data'))
-
-# Add titles
-fig.update_layout(
-    title='Bitcoin live share price evolution',
-    yaxis_title='Bitcoin Price (kUS Dollars)')
-
-# X-Axes
-fig.update_xaxes(
-    rangeslider_visible=True,
-    rangeselector=dict(
-        buttons=list([
-            dict(count=15, label="15m", step="minute", stepmode="backward"),
-            dict(count=45, label="45m", step="minute", stepmode="backward"),
-            dict(count=1, label="HTD", step="hour", stepmode="todate"),
-            dict(count=6, label="6h", step="hour", stepmode="backward"),
-            dict(step="all")
-        ])
-    )
-)
-
-#Show
-fig.show()
+if __name__ == "__main__":
+    app.run_server(debug=True)
