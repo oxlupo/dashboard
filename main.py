@@ -1,6 +1,6 @@
 #Data Source
 import yfinance as yf
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output,State
 import pandas as pd
 import plotly.express as px
 
@@ -31,6 +31,10 @@ app.layout = html.Div([
                       "Happiness_rank:": "Happiness_rank"
                    },
                    value="happiness_score"),
+    html.Br(),
+    html.Button(id="submit-button",
+                n_clicks=0,
+                children="Update the output"),
     dcc.Graph(id="happiness-graph",),
     html.Div(id="average-div")
 ])
@@ -50,9 +54,10 @@ def update_dropdown(selected_region):
 @app.callback(
     Output(component_id="happiness-graph", component_property="figure"),
     Output(component_id="average-div", component_property='children'),
-    Input(component_id="country-dropdown", component_property="value"),
-    Input(component_id="data-radio", component_property="value"))
-def update_graph(selected_country, selected_data):
+    Input(component_id="submit-button", component_property="n_click"),
+    State(component_id="country-dropdown", component_property="value"),
+    State(component_id="data-radio", component_property="value"))
+def update_graph(button_click, selected_country, selected_data):
     """update the country that choose"""
     filtered_happiness = happiness[happiness["country"] == selected_country]
     line_fig = px.line(filtered_happiness,
