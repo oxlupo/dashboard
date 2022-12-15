@@ -4,6 +4,7 @@ from dash import Dash, html, dcc, Input, Output
 import pandas as pd
 import plotly.express as px
 
+
 happiness = pd.read_csv("13 - worldhappiness.csv")
 region = happiness["region"].unique()
 country = happiness["country"].unique()
@@ -11,17 +12,39 @@ country = happiness["country"].unique()
 app = Dash()
 
 app.layout = html.Div([
-    dcc.Input(id="input_text", value="Change this text",
-              type="text"),
-    html.Div(id="output_text")
+    html.H1("World Happiness dashboard"),
+    html.P(["This dashboard shows the happiness score.",
+            html.Br(),
+            html.A("World happiness report Data source",
+                   href="https://worldhappiness.report",
+                   target="_blank")]),
+
+    dcc.Dropdown(id="country-dropdown",
+        options=happiness["country"].unique(),
+        value="United States"),
+    dcc.Graph(id="happiness-graph",)
 ])
 
+
 @app.callback(
-    Output(component_id="output_text", component_property="children"),
-    Input(component_id="input_text", component_property="value")
+    Output(component_id="happiness-graph", component_property="figure"),
+    Input(component_id="country-dropdown", component_property="value")
 )
+
+def update_graph(selected_country):
+    """update the country that choose"""
+    filtered_happiness = happiness[happiness["country"] == selected_country]
+    line_fig = px.line(filtered_happiness,
+                     x="year",
+                     y="happiness_score",
+                     title=f'Happiness Score in {selected_country}')
+    return line_fig
+
+
 def update_output_div(input_text):
     """update text"""
     return f"text:{input_text}"
+
+
 if __name__ == "__main__":
     app.run_server(debug=True)
