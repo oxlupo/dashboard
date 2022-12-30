@@ -19,3 +19,15 @@ def dataframe_coin():
     coin_list = cg.get_coins_list()
     coin_df = pd.DataFrame.from_dict(coin_list).sort_values("id").reset_index(drop=True)
     return coin_df
+
+
+import requests
+
+url = "https://api.coinstats.app/public/v1/coins/bitcoin?currency=AMD"
+
+payload={}
+headers = {}
+
+response = requests.request("GET", url, headers=headers, data=payload)
+
+print(response.text)
