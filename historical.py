@@ -47,4 +47,11 @@ def several_historical_data(token_list: list, days: str):
         hist = get_historical_data(id=token, days=days, interval="daily", vs_currency="usd")
         historical_dict[token] = hist
     hist_df = pd.DataFrame(historical_dict)
+
     return hist_df
+
+
+def token_returns(dataframe: pd.DataFrame):
+    """get return of each token in a dataframe"""
+    return_df = dataframe.pct_change().dropna()
+    print(return_df)
