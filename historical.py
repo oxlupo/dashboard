@@ -1,6 +1,6 @@
 from pycoingecko import CoinGeckoAPI
 import pandas as pd
-
+import matplotlib.pyplot as plt
 cg = CoinGeckoAPI()
 
 
@@ -42,16 +42,32 @@ def several_historical_data(token_list: list, days: str):
     token_list -> ["bitcoin", "ethereum", "fantom", "link", "litecoin"]:param
     """
     historical_dict = dict()
+    try:
+        for token in token_list:
+            hist = get_historical_data(id=token, days=days, interval="daily", vs_currency="usd")
+            if not hist == None:
 
-    for token in token_list:
-        hist = get_historical_data(id=token, days=days, interval="daily", vs_currency="usd")
-        historical_dict[token] = hist
-    hist_df = pd.DataFrame(historical_dict)
+                historical_dict[token] = hist
+        hist_df = pd.DataFrame(historical_dict)
+    except Exception as e:
+        print(e)
 
     return hist_df
 
 
-def token_returns(dataframe: pd.DataFrame):
+def token_returns(token, days: str):
     """get return of each token in a dataframe"""
-    return_df = dataframe.pct_change().dropna()
-    print(return_df)
+    if isinstance(token, pd.DataFrame):
+        return_df = token.pct_change(1).dropna()
+
+        return return_df
+
+    if isinstance(token, str):
+        returns = get_historical_data(id=token, days=days, interval="daily", vs_currency='usd')
+
+        return returns
+
+
+
+
+token_list = ["bitcoin", "ethereum", "fantom", "link", "litecoin"]
