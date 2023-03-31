@@ -1,5 +1,6 @@
 from pycoingecko import CoinGeckoAPI
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 cg = CoinGeckoAPI()
 
@@ -48,6 +49,8 @@ def several_historical_data(token_list: list, days: str):
             if not hist == None:
 
                 historical_dict[token] = hist
+            else:
+                raise "None value returns"
         hist_df = pd.DataFrame(historical_dict)
     except Exception as e:
         print(e)
@@ -56,18 +59,30 @@ def several_historical_data(token_list: list, days: str):
 
 
 def token_returns(token, days: str):
-    """get return of each token in a dataframe"""
+    """
+    get return of each token in a dataframe
+    """
     if isinstance(token, pd.DataFrame):
         return_df = token.pct_change(1).dropna()
-
         return return_df
 
     if isinstance(token, str):
         returns = get_historical_data(id=token, days=days, interval="daily", vs_currency='usd')
+        return_df = pd.DataFrame(returns).pct_change(1).dropna()
+        return return_df
 
-        return returns
+    if isinstance(token, list):
+        token_return = several_historical_data(token_list=token, days=days)
+        returns_df = token_return.pct_change(1).dropna()
+        return returns_df
 
 
-
+def plot_daily_return(token_name):
+    returns = token_returns(token_name, "365")
+    sns.displot(returns, color="tomato", height=3, bins=100, aspect=23/6)
+    plt.title("daily return")
+    plt.show()
 
 token_list = ["bitcoin", "ethereum", "fantom", "link", "litecoin"]
+
+plot_daily_return(token_name="bitcoin")
