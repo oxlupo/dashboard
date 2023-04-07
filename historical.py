@@ -1,3 +1,5 @@
+import json
+import seaborn as sn
 from pycoingecko import CoinGeckoAPI
 import pandas as pd
 import seaborn as sns
@@ -83,6 +85,19 @@ def plot_daily_return(token_name):
     plt.title("daily return")
     plt.show()
 
+
 token_list = ["bitcoin", "ethereum", "fantom", "link", "litecoin"]
 
-plot_daily_return(token_name="bitcoin")
+hist = several_historical_data(token_list, days="100")
+correlation = hist.corr()
+sn.heatmap(correlation, annot=True)
+plt.show()
+
+fantom = token_returns(token=["fantom", "wigoswap", "mummy-finance"], days="100")
+
+fantom.plot(figsize=(15, 5))
+plt.title("Fantom ecosystem Return")
+plt.show()
+
+
+
